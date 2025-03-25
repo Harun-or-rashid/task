@@ -17,6 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->bigInteger('team_id');
+            $table->bigInteger('organization_id');
+            $table->decimal('salary', 10, 2);
+            $table->date('start_date');
+            $table->longText('description')->nullable();
+            $table->enum('role', ['User', 'Manager'])->default('User');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['Admin', 'Manager'])->default('Admin');
-            $table->bigInteger('employee_id')->nullable();
+            $table->bigInteger('employee_id');
             $table->boolean('manage_organization')->default(false);
             $table->boolean('manage_team')->default(false);
             $table->boolean('manage_employee')->default(false);
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('permissions');
     }
 };

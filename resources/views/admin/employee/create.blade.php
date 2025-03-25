@@ -68,6 +68,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="name">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter Employee password" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="name">Confirm Password</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Enter Confirm password" required>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Description Field -->

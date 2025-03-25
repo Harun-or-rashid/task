@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Team;
+use App\Models\User;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -62,6 +63,11 @@ class TeamController extends Controller
     {
         $teams = Team::where('organization_id', $organization_id)->get();
         return response()->json($teams);
+    }
+    public function getUsers($team_id)
+    {
+        $users = User::where('team_id', $team_id)->get();
+        return response()->json($users);
     }
 
 }

@@ -21,7 +21,35 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'team_id',
+        'organization_id',
+        'salary',
+        'start_date',
+        'description',
+        'role',
+        'status',
     ];
+
+    public function team() {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function organization() {
+        return $this->belongsTo(Organization::class,);
+    }
+
+    public function scopeFilterByStartDate($query, $date) {
+        return $query->where('start_date', '>=', $date);
+    }
+    public function permission()
+    {
+        return $this->hasOne(Permission::class);
+    }
+    public function hasPermission($permission)
+{
+    return $this->permission && $this->permission->$permission;
+}
+
 
     /**
      * The attributes that should be hidden for serialization.

@@ -29,6 +29,7 @@ class EmployeeStoreAndUpdateRequest extends FormRequest
             'salary' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'description' => 'nullable|string',
+            'password' => 'required|string|min:6|confirmed',
         ];
     }
 }

@@ -5,7 +5,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        <div class="sidebar-brand-text mx-3">SB m <sup>2</sup></div>
     </a>
 
     <!-- Divider -->
@@ -19,45 +19,23 @@
     </li>
 
     <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
-    </div>
-
-    <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manager"
-            aria-expanded="true" aria-controls="manager">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Maneger</span>
-        </a>
-        <div id="manager" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="{{ route('list.maneger') }}">List</a>
-                <a class="collapse-item" href="{{ route('create.maneger') }}">Create Manager</a>
-            </div>
-        </div>
-    </li>
-
-    <li class="nav-item">
+        @if(isset($permissions['manage_organization']) && $permissions['manage_organization'])
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
+           aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>Organizations</span>
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="{{route('list.organization')}}">List</a>
-                <a class="collapse-item" href="{{route('create.organization')}}">Create</a>
+                <a class="collapse-item" href="{{ route('list.organization') }}">List</a>
+                <a class="collapse-item" href="{{ route('create.organization') }}">Create</a>
             </div>
         </div>
+        @endif
     </li>
-
-    <!-- Nav Item - Utilities Collapse Menu -->
+    @if(isset($permissions['manage_team']) && $permissions['manage_team'])
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                 aria-expanded="true" aria-controls="collapseUtilities">
@@ -73,6 +51,9 @@
                 </div>
             </div>
         </li>
+        @endif
+
+        @if(isset($permissions['manage_employee']) && $permissions['manage_employee'])
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
@@ -87,27 +68,46 @@
                 </div>
             </div>
         </li>
+        @endif
+        @if(isset($permissions['manage_report']) && $permissions['manage_report'])
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports"
+                aria-expanded="true" aria-controls="reports">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Reports</span>
+            </a>
+            <div id="reports" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Custom Components:</h6>
+                    <a class="collapse-item" href="{{route('teams.average.salary')}}">Avg Salary</a>
+                    <a class="collapse-item" href="{{route('organizations.employee.count')}}">Org Employees</a>
+                </div>
+            </div>
+        </li>
+        @endif
 
 
-    <div class="sidebar-heading">
-        Reports
-    </div>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports"
-            aria-expanded="true" aria-controls="reports">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Reports</span>
+
+
+    <!-- Nav Item - Utilities Collapse Menu -->
+    {{-- <li class="nav-item">
+        @if($admin->manageTeam == 1)  <!-- Check if the permission is set to 1 -->
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+           aria-expanded="true" aria-controls="collapseUtilities">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>Team</span>
         </a>
-        <div id="reports" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="{{route('teams.average.salary')}}">Avg Salary</a>
-                <a class="collapse-item" href="{{route('organizations.employee.count')}}">Org Employees</a>
+                <h6 class="collapse-header">Custom Utilities:</h6>
+                <a class="collapse-item" href="{{ route('list.team') }}">List</a>
+                <a class="collapse-item" href="{{ route('create.team') }}">Create</a>
             </div>
         </div>
-    </li>
+        @endif
+    </li> --}}
 
     <!-- Divider -->
     <hr class="sidebar-divider">

@@ -20,8 +20,13 @@ class Organization extends Model
         'status',
     ];
 
+    public function teams()
+    {
+        return $this->hasMany(Team::class);
+    }
+
     public function employees()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(User::class);
     }
 }
