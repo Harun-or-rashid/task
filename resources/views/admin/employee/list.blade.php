@@ -59,8 +59,8 @@
                         @foreach ($employees as $employee)
                         <tr>
                             <td>{{ $i++ }}</td>
-                            <td>{{ $employee->organization->name }}</td>
-                            <td>{{ $employee->team->name }}</td>
+                            <td>{{ $employee->organization->name ??  $employee->name}}</td>
+                            <td>{{ $employee->team->name ?? $employee->name }}</td>
                             <td>{{ $employee->name }}</td>
                             <td>{{ $employee->salary }}</td>
                             <td>{{ $employee->start_date }}</td>

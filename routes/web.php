@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\TeamController;
 
 Route::get('/', function () {
-    return view ('admin.index');
+    return redirect()->route('admin.login');
 });
 
 Auth::routes();
@@ -60,6 +60,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web']], function() {
         Route::get('/maneger-edit/{id}', [EmployeeController::class, 'manegerEdit'])->name('edit.maneger');
         Route::post('/maneger-update/{id}', [EmployeeController::class, 'manegerUpdate'])->name('update.maneger');
         Route::delete('/maneger-delete/{id}', [EmployeeController::class, 'manegerDelete'])->name('delete.maneger');
+        Route::get('/import', [EmployeeController::class, 'showImportForm'])->name('employee.import.form');
+        Route::post('/import', [EmployeeController::class, 'importEmployees'])->name('employee.import');
 
         // Reports
         Route::get('/teams/average-salary', [ReportController::class, 'teamSalaryReport'])->name('teams.average.salary');

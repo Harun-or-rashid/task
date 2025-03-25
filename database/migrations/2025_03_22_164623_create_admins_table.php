@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('manage_organization')->default(false);
             $table->boolean('manage_team')->default(false);
             $table->boolean('manage_employee')->default(false);
+            $table->boolean('manage_maneger')->default(false);
             $table->boolean('manage_report')->default(false);
             $table->timestamps();
         });

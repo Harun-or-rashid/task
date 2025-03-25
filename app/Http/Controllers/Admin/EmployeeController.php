@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use Exception;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\Employee;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use App\Events\SalaryUpdated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Events\EmployeeImportStarted;
 use App\Http\Requests\Admin\EmployeeStoreAndUpdateRequest;
-use App\Models\Admin;
 
 class EmployeeController extends Controller
 {
@@ -91,34 +93,76 @@ class EmployeeController extends Controller
         return view('admin.employee.edit', compact('employee', 'organizations', 'teams'));
     }
 
-    public function update(EmployeeStoreAndUpdateRequest $request, $id)
-    {
-        try {
-            $employee = User::find($id);
+    // public function update(Request $request, $id)
+    // {
+    //     try {
+    //         $employee = User::find($id);
 
-            $data = [
-                'organization_id' => $request->organization_id,
-                'team_id' => $request->team_id,
-                'name' => $request->name,
-                'email' => $request->email,
-                'salary' => $request->salary,
-                'start_date' => $request->start_date,
-                'description' => $request->description,
-            ];
+    //         $data = [
+    //             'organization_id' => $request->organization_id,
+    //             'team_id' => $request->team_id,
+    //             'name' => $request->name,
+    //             'email' => $request->email,
+    //             'salary' => $request->salary,
+    //             'start_date' => $request->start_date,
+    //             'description' => $request->description,
+    //         ];
 
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
-            }
+    //         if ($request->filled('password')) {
+    //             $data['password'] = Hash::make($request->password);
+    //         }
 
-            $employee->update($data);
+    //         $employee->update($data);
 
-            return redirect()->route('list.employee')->with('success', 'Employee updated successfully.');
-        } catch (Exception $e) {
-            Log::error('Employee Update Error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong! Please try again.');
+    //         return redirect()->route('list.employee')->with('success', 'Employee updated successfully.');
+    //     } catch (Exception $e) {
+    //         Log::error('Employee Update Error: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Something went wrong! Please try again.');
+    //     }
+    // }
+    public function update(Request $request, $id)
+{
+    // dd($request);
+    try {
+        $employee = User::find($id);
+
+        // Check if employee exists
+        if (!$employee) {
+            return redirect()->back()->with('error', 'Employee not found!');
         }
-    }
 
+        // Store the old salary before updating
+        $oldSalary = $employee->salary;
+
+        // Prepare the data to update the employee
+        $data = [
+            'organization_id' => $request->organization_id,
+            'team_id' => $request->team_id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'salary' => $request->salary,
+            'start_date' => $request->start_date,
+            'description' => $request->description,
+        ];
+
+
+        $employee->update($data);
+
+        // Check if the salary has changed
+        if ($oldSalary != $request->salary) {
+            // Trigger the SalaryUpdated event to log the change
+            event(new SalaryUpdated($id, $oldSalary, $request->salary));
+        }
+
+        // Return success response
+        return redirect()->route('list.employee')->with('success', 'Employee updated successfully.');
+
+    } catch (Exception $e) {
+        // Log any errors that occur during the update
+        Log::error('Employee Update Error: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Something went wrong! Please try again.');
+    }
+}
 
     public function delete($id)
     {
@@ -234,6 +278,25 @@ class EmployeeController extends Controller
         }
 
 
+    }
+
+    public function showImportForm()
+    {
+        return view('admin.employee.import');
+    }
+    public function importEmployees(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:json|max:10240',
+        ]);
+
+        // Store the uploaded JSON file
+        $file = $request->file('file')->storeAs('employee_imports', 'employees.json');
+
+        // Trigger the import event
+        event(new EmployeeImportStarted($file));
+
+        return back()->with('success', 'Employee import started!');
     }
 
 

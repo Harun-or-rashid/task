@@ -84,6 +84,7 @@
                     <h6 class="collapse-header">List</h6>
                     <a class="collapse-item" href="{{ route('list.employee') }}">List</a>
                     <a class="collapse-item" href="{{ route('create.employee') }}">Create</a>
+                    <a class="collapse-item" href="{{ route('employee.import.form') }}">Import</a>
                 </div>
             </div>
         </li>
