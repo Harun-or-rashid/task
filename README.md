@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Installation Process</title>
 </head>
 <body>
 
-<h1>Task Installation Process</h1>
+<h1>Task Project Installation Process</h1>
 
 <h2> Project Overview</h2>
 <p>This Laravel-based API project manages organizations, teams, and employees with authentication and role-based access control using Laravel Sanctum. It includes features such as employee management, team management, reporting, and CSV imports.</p>
