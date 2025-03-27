@@ -19,6 +19,7 @@
                             <th>Sl</th>
                             <th>Team Name</th>
                             <th>Average Salary</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -31,11 +32,16 @@
                             <td>{{ $i++ }}</td>
                             <td>{{ $team->name }}</td>
                             <td>${{ number_format($team->employees_avg_salary, 2) }}</td>
+                            <td>
+                                <a href="{{ route('teams.average.salary.pdf.download',$team->id) }}"><i class="fa fa-download"></i></a>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $teams->links() }}
+                </div>
             </div>
         </div>
     </div>

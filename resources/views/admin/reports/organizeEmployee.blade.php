@@ -19,6 +19,7 @@
                             <th>Sl</th>
                             <th>Organization Name</th>
                             <th>Total Employees</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -31,17 +32,20 @@
                            <td>{{ $i++ }}</td>
                            <td>{{ $org->name }}</td>
                            <td>{{ $org->employees_count }}</td>
+                           <td>
+                            <a href="{{ route('employee.report.pdf.download', $org->id) }}"><i class="fa fa-download"></i></a>
+                           </td>
                        </tr>
                    @endforeach
                     </tbody>
                 </table>
-
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $organizations->links() }}
+                </div>
             </div>
         </div>
     </div>
 
 </div>
 @endsection
-@section('scripts')
 
-@endsection

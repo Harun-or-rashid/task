@@ -13,28 +13,31 @@ class TeamController extends Controller
 {
     public function index()
     {
-        $teams = Team::all();
-        return view ('admin.team.index' , compact('teams'));
+        $teams = Team::cursorPaginate(10);
+        return view('admin.team.index', compact('teams'));
     }
+
     public function create()
     {
         $organizations = Organization::all();
         return view ('admin.team.create', compact('organizations'));
     }
     public function store(TeamStoreAndUpdateRequest $request)
-    {
-        try {
-            $team = new Team();
-            $team->organization_id = $request->organization_id;
-            $team->name = $request->name;
-            $team->description = $request->description;
-            $team->status = $request->status;
-            $team->save();
-            return redirect()->route('list.team')->with('success', 'Team created successfully');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Something went wrong');
-        }
+{
+    try {
+        $team = Team::create([
+            'organization_id' => $request->organization_id,
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('list.team')->with('success', 'Team created successfully');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Something went wrong');
     }
+}
+
 
     public function edit($id)
     {

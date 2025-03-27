@@ -18,9 +18,19 @@ class OrganizationController extends Controller
     {
         try {
             $organizations = Organization::all();
-            return response()->json(['organizations' => $organizations], 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Organizations retrieved successfully',
+                'data' => $organizations
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve organizations',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

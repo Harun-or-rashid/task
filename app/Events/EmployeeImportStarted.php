@@ -37,17 +37,14 @@ class EmployeeImportStarted
     public function handle()
     {
         try {
-            // Read and decode the JSON file
             $employees = json_decode(Storage::get($this->file), true);
             $totalEmployees = count($employees);
             $currentEmployee = 0;
 
-            // Process each employee
             foreach ($employees as $employee) {
                 $existingEmployee = User::where('email', $employee['email'])->first();
 
                 if (!$existingEmployee) {
-                    // If the employee doesn't exist, create a new user
                     User::create($employee);
                 } else {
                     Log::info('Employee with email ' . $employee['email'] . ' already exists.');
@@ -68,7 +65,7 @@ class EmployeeImportStarted
         } catch (Exception $e) {
             Log::error('Error importing employees: ' . $e->getMessage());
 
-            $fallbackAdmin = Admin::where('email', 'admin@admin.com')->first(); // Admin table fallback
+            $fallbackAdmin = Admin::where('email', 'admin@admin.com')->first();
 
             if ($fallbackAdmin) {
                 Notification::send($fallbackAdmin, new EmployeeImportStatus('Import failed. Please try again.'));

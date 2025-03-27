@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Jobs;
 
 use Exception;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Bus\Queueable;
 use App\Events\ImportProgressUpdated;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +29,6 @@ class ImportEmployeeData implements ShouldQueue
     public function handle()
     {
         try {
-            // Read the JSON file content
             $employees = json_decode(Storage::get($this->file), true);
             $totalEmployees = count($employees);
             $currentEmployee = 0;
@@ -35,9 +36,9 @@ class ImportEmployeeData implements ShouldQueue
             $employeeData = [];
 
             foreach ($employees as $employee) {
-                // Optionally check for duplicate emails
-                if (!User::where('email', $employee['email'])->exists()) {
-                    // Prepare data for bulk insert
+                $existingEmployee = User::where('email', $employee['email'])->first();
+
+                if (!$existingEmployee) {
                     $employeeData[] = [
                         'organization_id' => $employee['organization_id'],
                         'team_id' => $employee['team_id'],
@@ -56,18 +57,15 @@ class ImportEmployeeData implements ShouldQueue
 
                 $currentEmployee++;
 
-                // Send progress update for every 50 records
                 if ($currentEmployee % 50 == 0) {
                     event(new ImportProgressUpdated($currentEmployee, $totalEmployees));
                 }
             }
 
-            // Insert all employee data in bulk
             if (!empty($employeeData)) {
                 User::insert($employeeData);
             }
 
-            // Send notification to the user upon success
             $this->sendNotification('Import completed successfully.');
 
         } catch (Exception $e) {
@@ -78,13 +76,12 @@ class ImportEmployeeData implements ShouldQueue
 
     private function sendNotification($message)
     {
-        // Check if the user is authenticated
-        $user = auth()->user();
-        if ($user) {
-            // Send notification to the user
-            Notification::send($user, new EmployeeImportStatus($message));
+        $fallbackAdmin = Admin::where('email', 'admin@admin.com')->first();
+
+        if ($fallbackAdmin) {
+            Notification::send($fallbackAdmin, new EmployeeImportStatus($message));
         } else {
-            Log::error('No authenticated user to send notification to.');
+            Log::error('No fallback admin to send notification to.');
         }
     }
 }

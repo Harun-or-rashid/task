@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Admin\AdminLoginRequest;
 
 class AdminAuthController extends Controller
@@ -26,6 +28,27 @@ class AdminAuthController extends Controller
             'token' => $token,
             'redirect_url' => url('/dashboard')
         ], 200);
+    }
+    public function userLogin(Request $request)
+    {
+            $request->validate([
+                'email' =>'required',
+                'password' =>'required',
+            ]);
+            $user = User::where('email', $request->email)->first();
+
+            if(!$user || !Hash::check($request->password,$user->password)){
+                return [
+                    'errors' => [
+                        'email' => [' the credential are incorrect']
+                    ]
+                ];
+            }
+            $token = $user->createToken($user->name);
+            return [
+                'user' => $user,
+                'token' => $token->plainTextToken,
+            ];
     }
     public function logout(Request $request)
     {

@@ -11,9 +11,14 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::paginate(10);
+        $organizations = collect();
+        Organization::chunk(10, function ($chunk) use (&$organizations) {
+            $organizations = $organizations->merge($chunk);
+        });
+
         return view('admin.organizations.list', compact('organizations'));
     }
+
 
     public function create()
     {
@@ -23,13 +28,13 @@ class OrganizationController extends Controller
     {
         try {
             $logoPath = null;
+
             if ($request->hasFile('logo')) {
                 $file = $request->file('logo');
-                $extension = $file->getClientOriginalExtension();
-                $filename = time() . '.' . $extension;
-                $file->move(public_path('organizationLogo'), $filename);
-                $logoPath = 'organizationLogo/' . $filename;
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+                $logoPath = $file->storeAs('organizationLogo', $filename, 'public');
             }
+
             Organization::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -43,12 +48,13 @@ class OrganizationController extends Controller
                 'description' => $request->description,
                 'status' => $request->status ?? 'active',
             ]);
+
             return redirect()->back()->with('success', 'Organization created successfully');
         } catch (\Exception $exception) {
             return redirect()->back()->with('error', $exception->getMessage());
         }
-
     }
+
     public function edit($id)
     {
         $organization = Organization::find($id);

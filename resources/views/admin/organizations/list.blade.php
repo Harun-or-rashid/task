@@ -49,7 +49,9 @@
                         @endforeach
                     </tbody>
                 </table>
-
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $organizations->links() }}
+                </div>
             </div>
         </div>
     </div>
@@ -57,42 +59,5 @@
 </div>
 @endsection
 @section('scripts')
-<script>
-    $(document).ready(function () {
-        const token = localStorage.getItem('admin_token');
-        if (!token) {
-            window.location.href = "/admin/login";
-        }
 
-        $('#organization-form').submit(function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-            const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-            $.ajax({
-                url: '/api/admin/v1/organizations',
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    alert("Organization created successfully!");
-                    window.location.href = '/organizations';
-                },
-                error: function (xhr, status, error) {
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        alert("Error: " + xhr.responseJSON.message);
-                    } else {
-                        alert("An error occurred.");
-                    }
-                }
-            });
-        });
-    });
-</script>
 @endsection

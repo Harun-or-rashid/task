@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Employee;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class EmployeeDashboardController extends Controller
 {
-    public function dashboard()
+    public function index()
     {
         $user = auth()->user();
 
-        return view('employee.index',compact('user'));
+        return response()->json($user);
     }
 }

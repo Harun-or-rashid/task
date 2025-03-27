@@ -5,7 +5,12 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        @if (auth()->guard('admin')->user()->role === 'Manager')
+            <div class="sidebar-brand-text mx-3">Manager</div>
+        @else
+            <div class="sidebar-brand-text mx-3">Admin</div>
+
+        @endif
     </a>
 
     <!-- Divider -->
@@ -26,37 +31,40 @@
         Interface
     </div>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manager"
-            aria-expanded="true" aria-controls="manager">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Maneger</span>
-        </a>
-        <div id="manager" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="{{ route('list.maneger') }}">List</a>
-                <a class="collapse-item" href="{{ route('create.maneger') }}">Create Manager</a>
+    @unless(auth()->guard('admin')->user()->role === 'Manager')
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#manager"
+                aria-expanded="true" aria-controls="manager">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Maneger</span>
+            </a>
+            <div id="manager" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Custom Components:</h6>
+                    <a class="collapse-item" href="{{ route('list.maneger') }}">List</a>
+                    <a class="collapse-item" href="{{ route('create.maneger') }}">Create Manager</a>
+                </div>
             </div>
-        </div>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Organizations</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="{{route('list.organization')}}">List</a>
-                <a class="collapse-item" href="{{route('create.organization')}}">Create</a>
+        </li>
+    @endunless
+    @if(auth()->guard('admin')->user()->manage_organization == 1)
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Organizations</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Custom Components:</h6>
+                    <a class="collapse-item" href="{{route('list.organization')}}">List</a>
+                    <a class="collapse-item" href="{{route('create.organization')}}">Create</a>
+                </div>
             </div>
-        </div>
-    </li>
-
+        </li>
+    @endif
+    @if(auth()->guard('admin')->user()->manage_team == 1)
     <!-- Nav Item - Utilities Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
@@ -73,6 +81,8 @@
                 </div>
             </div>
         </li>
+    @endif
+    @if(auth()->guard('admin')->user()->manage_employee == 1)
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
@@ -88,8 +98,9 @@
                 </div>
             </div>
         </li>
+    @endif
 
-
+    @if(auth()->guard('admin')->user()->manage_report  == 1)
     <div class="sidebar-heading">
         Reports
     </div>
@@ -109,12 +120,10 @@
             </div>
         </div>
     </li>
+    @endif
 
     <!-- Divider -->
     <hr class="sidebar-divider">
-
-
-
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>

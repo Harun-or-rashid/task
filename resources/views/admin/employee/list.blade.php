@@ -15,7 +15,7 @@
             <!-- Dropdown Filters -->
             <form method="GET" action="{{ route('list.employee') }}" class="mb-4">
                 <div class="form-row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <select name="organization_id" id="organization_id" class="form-control">
                             <option value="" disabled selected>Select Organization</option>
                             @foreach($organizations as $organization)
@@ -23,7 +23,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <select name="team_id" id="team_id" class="form-control">
                             <option value="" disabled selected>Select Team</option>
                             @foreach($teams as $team)
@@ -31,7 +31,10 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+                    </div>
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary">Filter</button>
                     </div>
                 </div>
@@ -53,31 +56,30 @@
                     </thead>
 
                     <tbody>
-                        @php
-                            $i = 1;
-                        @endphp
-                        @foreach ($employees as $employee)
-                        <tr>
-                            <td>{{ $i++ }}</td>
-                            <td>{{ $employee->organization->name ??  $employee->name}}</td>
-                            <td>{{ $employee->team->name ?? $employee->name }}</td>
-                            <td>{{ $employee->name }}</td>
-                            <td>{{ $employee->salary }}</td>
-                            <td>{{ $employee->start_date }}</td>
-                            <td>{{ $employee->status }}</td>
-                            <td>
-                                <a href="{{ route('edit.employee', $employee->id) }}">Edit</a>
-                                |
-                                <form action="{{ route('delete.employee', $employee->id) }}" method="POST"  style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this employee?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
+                        @foreach ($employees as $key => $employee)
+                            <tr>
+                                <td>{{ $employees->firstItem() + $key }}</td>
+                                <td>{{ $employee->organization->name ??  $employee->name }}</td>
+                                <td>{{ $employee->team->name ?? $employee->name }}</td>
+                                <td>{{ $employee->name }}</td>
+                                <td>{{ $employee->salary }}</td>
+                                <td>{{ $employee->start_date }}</td>
+                                <td>{{ $employee->status }}</td>
+                                <td>
+                                    <a href="{{ route('edit.employee', $employee->id) }}">Edit</a> |
+                                    <form action="{{ route('delete.employee', $employee->id) }}" method="POST"  style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this employee?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $employees->appends(request()->query())->links() }}
+                </div>
 
             </div>
         </div>

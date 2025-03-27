@@ -12,18 +12,52 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Events\EmployeeImportStarted;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Admin\EmployeeStoreAndUpdateRequest;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $employees = User::all();
-            return response()->json(['success' => true, 'employees' => $employees], 200);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Something went wrong'], 500);
+        $organizations = Organization::all();
+        $teams = Team::all();
+
+        $employeesQuery = User::with(['organization', 'team']);
+
+        if ($request->filled('organization_id')) {
+            $employeesQuery->where('organization.organization_id', $request->organization_id);
         }
+
+        if ($request->filled('team_id')) {
+            $employeesQuery->where('team.team_id', $request->team_id);
+        }
+
+        if ($request->filled('start_date')) {
+            $employeesQuery->filterByStartDate($request->start_date);
+        }
+
+        $employees = $employeesQuery->paginate(10);
+
+        return response()->json([
+            'data' => $employees->items(),
+            'pagination' => [
+                'total' => $employees->total(),
+                'per_page' => $employees->perPage(),
+                'current_page' => $employees->currentPage(),
+                'last_page' => $employees->lastPage(),
+                'from' => $employees->firstItem(),
+                'to' => $employees->lastItem(),
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'An error occurred while fetching the employee list.',
+            'message' => $e->getMessage()
+        ], 500);
+    }
     }
 
     public function store(EmployeeStoreAndUpdateRequest $request)
@@ -261,6 +295,34 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             Log::error('Error deleting manager: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error deleting manager'], 500);
+        }
+    }
+    public function importEmployees(Request $request)
+    {
+        try {
+            $request->validate([
+                'file' => 'required|mimes:json|max:10240',
+            ]);
+
+            $file = $request->file('file')->storeAs('employee_imports', 'employees.json');
+
+            event(new EmployeeImportStarted($file));
+
+            return response()->json([
+                'message' => 'Employee import started!',
+                'file_path' => Storage::url($file)
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => 'Validation failed',
+                'message' => $e->getMessage(),
+                'details' => $e->errors()
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Something went wrong!',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
